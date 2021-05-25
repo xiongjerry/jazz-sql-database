@@ -43,6 +43,20 @@ app.get('/artist', (req, res) => {
     })
 })
 
+app.post('/artist', (req, res) => {
+    console.log('info sent in', req.body);
+    // SANITIZING
+    let queryText = `INSERT INTO "artist" ("name", "birthdate")
+    VALUES ($1, $2);`
+    let values = [req.body.name, req.body.birthdate]
+    pool.query(queryText, values)
+    .then( (result) => {
+        res.sendStatus(201)
+    }).catch( (err) => {
+        console.log(err);
+        res.sendStatus(500);
+    })
+});
 
 
 // Make POST and GET route for 'song'

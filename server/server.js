@@ -61,6 +61,41 @@ app.post('/artist', (req, res) => {
 
 // Make POST and GET route for 'song'
 
+app.get('/song', (req, res) => {
+    //connect the route from /artist to SQL database
+    const queryText = `SELECT * FROM "song" ORDER BY "title" DESC;`
+    pool.query(queryText)
+    .then( (songList) =>{
+        console.log('lists of songs', songList.rows);
+        res.send(songList.rows);
+    }).catch( (err) => {
+        console.log(err);
+        res.sendStatus(500);
+    })
+})
+
+app.post('/song', (req, res) => {
+    console.log('info sent in', req.body);
+    // SANITIZING
+    let queryText = `INSERT INTO "song" ("title", "length", "released")
+    VALUES ($1, $2, $3);`
+    let values = [req.body.title, req.body.length, req.body.released]
+    pool.query(queryText, values)
+    .then( (result) => {
+        res.sendStatus(201)
+    }).catch( (err) => {
+        console.log(err);
+        res.sendStatus(500);
+    })
+});
+
+
+
+
+
+
+
+
 app.get('/artist', (req, res) => {
     console.log(`In /songs GET`);
     res.send(artistList);
